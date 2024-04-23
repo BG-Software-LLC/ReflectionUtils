@@ -14,10 +14,12 @@ project.ext {
 repositories {
     mavenCentral()
     maven { url 'https://repo.bg-software.com/repository/nms/' }
+    maven { url 'https://repo.bg-software.com/repository/common/' }
 }
 
 dependencies {
     compileOnly "org.spigotmc:v1_8_R3-Taco:latest"
+    compileOnly "com.bgsoftware.common.annotations:Annotations:b2"
 }
 
 shadowJar {

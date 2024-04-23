@@ -1,6 +1,5 @@
 package com.bgsoftware.common.reflection;
 
-import org.bukkit.Bukkit;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -8,22 +7,20 @@ import java.lang.reflect.Modifier;
 
 public final class ReflectField<T> {
 
-    private static Unsafe UNSAFE = null;
-
     private static final ReflectField<Integer> MODIFIERS = new ReflectField<>(Field.class, int.class, "modifiers");
 
-    private static final String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+    private static Unsafe UNSAFE = null;
 
     private static final long INVALID_FIELD_OFFSET = -1;
 
     private final FieldWrapper<T> fieldWrapper;
 
-    public ReflectField(String clazzName, Class<?> returnType, String... fieldNames) {
-        this(getClass(clazzName), returnType, fieldNames);
+    public ReflectField(ClassInfo classInfo, Class<?> returnType, String... fieldNames) {
+        this(classInfo.findClass(), returnType, fieldNames);
     }
 
-    public ReflectField(String clazzName, Class<?> returnType, int modifiers, int fieldOrder) {
-        this(getClass(clazzName), returnType, modifiers, fieldOrder);
+    public ReflectField(ClassInfo classInfo, Class<?> returnType, int modifiers, int fieldOrder) {
+        this(classInfo.findClass(), returnType, modifiers, fieldOrder);
     }
 
     public ReflectField(Class<?> clazz, Class<?> returnType, String... fieldNames) {
@@ -127,15 +124,6 @@ public final class ReflectField<T> {
         return null;
     }
 
-    private static Class<?> getClass(String classPath) {
-        try {
-            return Class.forName(classPath.replace("VERSION", version));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
-        }
-    }
-
     private static Unsafe getUnsafe() {
         if (UNSAFE == null) {
             UNSAFE = new ReflectField<Unsafe>(Unsafe.class, Unsafe.class, "theUnsafe").get(null);
@@ -175,7 +163,7 @@ public final class ReflectField<T> {
 
         @Override
         void set(Object object, T value) {
-            if(isValid())
+            if (isValid())
                 getUnsafe().putObject(this.fieldBase, this.fieldOffset, value);
         }
 
@@ -202,7 +190,7 @@ public final class ReflectField<T> {
 
         @Override
         void set(Object object, T value) {
-            if(isValid())
+            if (isValid())
                 getUnsafe().putObject(object, this.fieldOffset, value);
         }
 
@@ -226,7 +214,7 @@ public final class ReflectField<T> {
 
         @Override
         void set(Object object, T value) throws IllegalAccessException {
-            if(isValid())
+            if (isValid())
                 field.set(object, value);
         }
 

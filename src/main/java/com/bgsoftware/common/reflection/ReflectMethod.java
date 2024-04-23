@@ -1,30 +1,26 @@
 package com.bgsoftware.common.reflection;
 
-import org.bukkit.Bukkit;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public final class ReflectMethod<T> {
 
-    private static final String version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-
     private final Method method;
 
-    public ReflectMethod(String classPath, String methodName, String... parameterTypes) {
-        this(getClass(classPath), methodName, parameterTypes);
+    public ReflectMethod(ClassInfo classInfo, String methodName, ClassInfo... parameterTypes) {
+        this(classInfo.findClass(), methodName, parameterTypes);
     }
 
-    public ReflectMethod(String classPath, int methodOrder, String... parameterTypes) {
-        this(getClass(classPath), methodOrder, parameterTypes);
+    public ReflectMethod(ClassInfo classInfo, int methodOrder, ClassInfo... parameterTypes) {
+        this(classInfo.findClass(), methodOrder, parameterTypes);
     }
 
-    public ReflectMethod(String classPath, String methodName, Class<?>... parameterTypes) {
-        this(getClass(classPath), methodName, parameterTypes);
+    public ReflectMethod(ClassInfo classInfo, String methodName, Class<?>... parameterTypes) {
+        this(classInfo.findClass(), methodName, parameterTypes);
     }
 
-    public ReflectMethod(String classPath, int methodOrder, Class<?>... parameterTypes) {
-        this(getClass(classPath), methodOrder, parameterTypes);
+    public ReflectMethod(ClassInfo classInfo, int methodOrder, Class<?>... parameterTypes) {
+        this(classInfo.findClass(), methodOrder, parameterTypes);
     }
 
     public ReflectMethod(Class<?> clazz, String methodName) {
@@ -35,12 +31,12 @@ public final class ReflectMethod<T> {
         this(clazz, methodOrder, new Class[0]);
     }
 
-    public ReflectMethod(Class<?> clazz, String methodName, String... parameterTypeNames) {
-        this(clazz, methodName, getClasses(parameterTypeNames));
+    public ReflectMethod(Class<?> clazz, String methodName, ClassInfo... parameterTypes) {
+        this(clazz, methodName, ClassInfo.findClasses(parameterTypes));
     }
 
-    public ReflectMethod(Class<?> clazz, int methodOrder, String... parameterTypeNames) {
-        this(clazz, methodOrder, getClasses(parameterTypeNames));
+    public ReflectMethod(Class<?> clazz, int methodOrder, ClassInfo... parameterTypes) {
+        this(clazz, methodOrder, ClassInfo.findClasses(parameterTypes));
     }
 
     public ReflectMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
@@ -120,22 +116,6 @@ public final class ReflectMethod<T> {
         }
 
         return null;
-    }
-
-    private static Class<?> getClass(String classPath) {
-        return getClasses(classPath)[0];
-    }
-
-    private static Class<?>[] getClasses(String... classPaths) {
-        Class<?>[] classes = new Class[classPaths.length];
-
-        try {
-            for (int i = 0; i < classPaths.length; i++)
-                classes[i] = Class.forName(classPaths[i].replace("VERSION", version));
-        } catch (Exception ignored) {
-        }
-
-        return classes;
     }
 
 }
