@@ -4,6 +4,10 @@ plugins {
     id 'maven-publish'
 }
 
+java {
+    withSourcesJar()
+}
+
 group 'ReflectionUtils'
 
 project.ext {
