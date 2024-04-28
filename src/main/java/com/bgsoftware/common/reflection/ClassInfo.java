@@ -62,16 +62,10 @@ public class ClassInfo {
 
         CRAFTBUKKIT {
             private final String bukkitPackage = Bukkit.getServer().getClass().getPackage().getName();
-            private final boolean hasVersionInPackage = this.bukkitPackage.split("\\.").length > 3;
 
             @Override
             Class<?> findClass(String className) throws ClassNotFoundException {
-                StringBuilder fullBukkitPackage = new StringBuilder(this.bukkitPackage);
-                if (this.hasVersionInPackage) {
-                    fullBukkitPackage.append(".").append(ServerVersion.getVersion());
-                }
-                fullBukkitPackage.append(".").append(className);
-                return Class.forName(fullBukkitPackage.toString());
+                return Class.forName(this.bukkitPackage + "." + className);
             }
         },
 
