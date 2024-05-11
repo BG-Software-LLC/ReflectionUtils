@@ -156,6 +156,7 @@ public final class ReflectField<T> {
 
         private long fieldOffset = INVALID_FIELD_OFFSET;
         private Object fieldBase = null;
+        private boolean calledRemoveFinal = false;
 
         StaticFinalFieldWrapper(Field field) {
             super(field);
@@ -165,6 +166,8 @@ public final class ReflectField<T> {
         void set(Object object, T value) {
             if (isValid())
                 getUnsafe().putObject(this.fieldBase, this.fieldOffset, value);
+            else if(!this.calledRemoveFinal)
+                new IllegalStateException("Trying to set final-field without calling #removeFinal first").printStackTrace();
         }
 
         @Override
@@ -176,6 +179,7 @@ public final class ReflectField<T> {
         void removeFinal() {
             this.fieldOffset = getUnsafe().staticFieldOffset(field);
             this.fieldBase = getUnsafe().staticFieldBase(field);
+            this.calledRemoveFinal = true;
         }
 
     }
@@ -183,6 +187,7 @@ public final class ReflectField<T> {
     private static final class FinalFieldWrapper<T> extends FieldWrapper<T> {
 
         private long fieldOffset = INVALID_FIELD_OFFSET;
+        private boolean calledRemoveFinal = false;
 
         FinalFieldWrapper(Field field) {
             super(field);
@@ -192,6 +197,8 @@ public final class ReflectField<T> {
         void set(Object object, T value) {
             if (isValid())
                 getUnsafe().putObject(object, this.fieldOffset, value);
+            else if(!this.calledRemoveFinal)
+                new IllegalStateException("Trying to set final-field without calling #removeFinal first").printStackTrace();
         }
 
         @Override
@@ -202,6 +209,7 @@ public final class ReflectField<T> {
         @Override
         void removeFinal() {
             this.fieldOffset = getUnsafe().objectFieldOffset(field);
+            this.calledRemoveFinal = true;
         }
 
     }
