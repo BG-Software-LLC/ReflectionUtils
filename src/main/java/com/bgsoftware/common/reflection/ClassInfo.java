@@ -7,6 +7,7 @@ public class ClassInfo {
 
     private final String className;
     private final PackageType packageType;
+    private final boolean printErrorOnFailure;
 
     public static Class<?>[] findClasses(ClassInfo[] classInfos) {
         Class<?>[] classes = new Class[classInfos.length];
@@ -16,8 +17,13 @@ public class ClassInfo {
     }
 
     public ClassInfo(String className, PackageType packageType) {
+        this(className, packageType, false);
+    }
+
+    public ClassInfo(String className, PackageType packageType, boolean printErrorOnFailure) {
         this.className = className;
         this.packageType = packageType;
+        this.printErrorOnFailure = printErrorOnFailure;
     }
 
     @Nullable
@@ -25,7 +31,8 @@ public class ClassInfo {
         try {
             return this.packageType.findClass(this.className);
         } catch (ClassNotFoundException error) {
-            error.printStackTrace();
+            if (this.printErrorOnFailure)
+                error.printStackTrace();
             return null;
         }
     }
