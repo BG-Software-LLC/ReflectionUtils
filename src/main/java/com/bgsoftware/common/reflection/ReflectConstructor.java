@@ -6,17 +6,21 @@ public final class ReflectConstructor<T> {
 
     private final Constructor<?> constructor;
 
-    public ReflectConstructor(Class<?> clazz, Class<?>... parameterTypes){
+    public ReflectConstructor(Class<?> clazz, ClassInfo... parameterTypes) {
+        this(clazz, ClassInfo.findClasses(parameterTypes));
+    }
+
+    public ReflectConstructor(Class<?> clazz, Class<?>... parameterTypes) {
         this.constructor = getConstructor(clazz, parameterTypes);
     }
 
-    public T newInstance(Object... args){
+    public T newInstance(Object... args) {
         Object result = null;
 
-        try{
-            if(isValid())
+        try {
+            if (isValid())
                 result = constructor.newInstance(args);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -24,18 +28,19 @@ public final class ReflectConstructor<T> {
         return result == null ? null : (T) result;
     }
 
-    public boolean isValid(){
+    public boolean isValid() {
         return constructor != null;
     }
 
-    private static Constructor<?> getConstructor(Class<?> clazz, Class<?>... parameterTypes){
+    private static Constructor<?> getConstructor(Class<?> clazz, Class<?>... parameterTypes) {
         Constructor<?> constructor = null;
 
-        if(clazz != null) {
+        if (clazz != null) {
             try {
                 constructor = clazz.getDeclaredConstructor(parameterTypes);
                 constructor.setAccessible(true);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         return constructor;

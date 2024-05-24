@@ -8,12 +8,18 @@ public class ClassInfo {
     private final String className;
     private final PackageType packageType;
     private final boolean printErrorOnFailure;
+    private Class<?> cachedClass = null;
 
     public static Class<?>[] findClasses(ClassInfo[] classInfos) {
         Class<?>[] classes = new Class[classInfos.length];
         for (int i = 0; i < classes.length; ++i)
             classes[i] = classInfos[i].findClass();
         return classes;
+    }
+
+    public ClassInfo(Class<?> clazz) {
+        this("", PackageType.UNKNOWN, false);
+        this.cachedClass = clazz;
     }
 
     public ClassInfo(String className, PackageType packageType) {
@@ -28,6 +34,13 @@ public class ClassInfo {
 
     @Nullable
     public Class<?> findClass() {
+        if (this.cachedClass == null)
+            this.cachedClass = findClassFromPackageType();
+
+        return this.cachedClass;
+    }
+
+    protected Class<?> findClassFromPackageType() {
         try {
             return this.packageType.findClass(this.className);
         } catch (ClassNotFoundException error) {
