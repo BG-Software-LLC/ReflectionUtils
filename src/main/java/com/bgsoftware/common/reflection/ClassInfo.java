@@ -57,7 +57,7 @@ public class ClassInfo {
 
             @Override
             Class<?> findClass(String className) throws ClassNotFoundException {
-                StringBuilder fullNMSPackage = new StringBuilder("net.minecraft.");
+                StringBuilder fullNMSPackage = new StringBuilder("net.minecraft");
                 if (this.isLegacyNMSPackageFormat) {
                     // Legacy format adds `server` and the version to the class name.
                     // Non legacy are required to provide the subpackage name as well.
